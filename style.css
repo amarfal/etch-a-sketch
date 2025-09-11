@@ -17,6 +17,7 @@ body {
     gap: 20px;
     font-family: system-ui, Arial, sans-serif;
     color: #1f2937;
+    background: #ffffff;
 }
 
 /* Top bar */
@@ -79,7 +80,6 @@ button:hover { filter: brightness(0.95); }
   }
   
   .panel {
-    background: #0f172a0a;
     padding: 14px;
     border-radius: 12px;
   }
@@ -128,7 +128,7 @@ button:hover { filter: brightness(0.95); }
   height: auto;
   border: none;
   outline: none;
-  border-radius: 8px;
+  border-radius: 5px;
   cursor: crosshair;
 }
 .pickDot {
