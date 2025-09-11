@@ -1,3 +1,10 @@
+@font-face {
+    font-family: 'PlymouthFont';
+    src: url('fonts/PlymouthD.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
 :root { --n: 16; }
 
 /* Center everything */
@@ -48,12 +55,19 @@ button:hover { filter: brightness(0.95); }
 .cell { 
     width: calc(var(--size) / var(--n));
     height: calc(var(--size) / var(--n));
-    background: #eeeeee;
+    background: #ffffff;
     transition: background-color .05s linear;
     user-select: none;
 }
 
-.title { text-align: center; margin: 24px 0 8px; }
+.title {
+    font-family: 'PlymouthFont', 'Tagesschrift', sans-serif;
+    text-shadow: 2px 5px 2px #000000; 
+    text-align: center; 
+    color: #3b82f6;
+    font-size: 15vmin;
+    margin: 0 auto; 
+}
 
 .app {
     display: grid;
@@ -105,7 +119,28 @@ button:hover { filter: brightness(0.95); }
 .slider { display: grid; gap: 6px; }
 .sizeLabel { text-align: left; font-weight: 700; }
 
-.board.with-grid .cell { outline: 1px solid rgba(0,0,0,.08); }
+.board.with-grid .cell { outline: 1px solid rgba(0,0,0,.5); }
+
+.paletteWrap { position: relative; width: 100%; }
+.palette {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: none;
+  outline: none;
+  border-radius: 8px;
+  cursor: crosshair;
+}
+.pickDot {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px #0003;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
 
 @media (max-width: 680px) {
     .app {
@@ -113,4 +148,5 @@ button:hover { filter: brightness(0.95); }
     }
     .panel { order: 2; }
     .board { order: 1; width: 92vw; height: 92vw; }
-}  
+}
+

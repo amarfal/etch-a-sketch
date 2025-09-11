@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const board      = $("#board");
     const clearBtn   = $("#clearBtn");
-    const colorPick  = $("#color");
+
     const chkEraser  = $("#eraser");
     const chkGrid    = $("#gridLines");
     const chkRainbow = $("#rainbow");
@@ -12,17 +12,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const sizeRange  = $("#size");
     const sizeVal    = $("#sizeVal");
 
+    const palette    = $("#palette");
+    const pickDot    = $("#pickDot");
+
+    let penColor = "#1d4ed8";
+
     const MAX = 100;
-    const DEFAULT_N = 16;
-    let n = DEFAULT_N;
+    let n = 16;
 
     let drawing = false;
-    let colorMode = "color";
 
     makeGrid(n);
     wireUI();
 
-    /* controls */
+    /* --- controls --- */
     function wireUI() {
         // grid lines toggle
         chkGrid.addEventListener("change", () => {
@@ -38,53 +41,132 @@ document.addEventListener('DOMContentLoaded', () => {
         chkRainbow.addEventListener("change", () => {
           if (chkRainbow.checked) { chkEraser.checked = false; colorMode = "rainbow"; }
           else                    { colorMode = chkEraser.checked ? "eraser" : "color"; }
-    });
+        });
+
+
+        sizeRange.addEventListener("input", () => {
+            sizeVal.textContent = sizeRange.value;
+        });
+        sizeRange.addEventListener("change", () => {
+            n = clamp(parseInt(sizeRange.value, 10), 4, MAX);
+            makeGrid(n);
+        });
+        sizeVal.textContent = sizeRange.value;
+  
+        // clear board
+        clearBtn.addEventListener("click", clearGrid);
+  
+        // draw handling 
+        board.addEventListener("mousedown", (e) => {
+            drawing = true;
+            if (isCell(e.target)) shadeCell(e.target);
+        });
+        board.addEventListener("mouseover", (e) => {
+            if (isCell(e.target) && (!chkClick.checked || drawing)) {
+                shadeCell(e.target);
+            }
+        });
+        window.addEventListener("mouseup", () => drawing = false);
+        board.addEventListener("mouseleave", () => drawing = false);
+    }
 
     /* --- creating the grid --- */
     function makeGrid(n) {
         board.innerHTML = "";
-
         board.style.setProperty("--n", n);
 
         for (let i = 0; i < n * n; i++) {
             const cell = document.createElement("div");
             cell.className = "cell";
-
-            // im too cool
-            cell.dataset.alpha = "0";
-
-            cell.addEventListener("mouseenter", shadeCell);
             board.appendChild(cell);
         }
     }
 
-    /* interaction */
-    function shadeCell(e) {
-        const c = e.target;
+    /* --- interaction --- */
+    function shadeCell(cell) {
+        if (!isCell(cell)) return;
 
-        if (!c.dataset.rgb) {
-            const r = rand255();
-            const g = rand255();
-            const b = rand255();
-            c.dataset.rgb = `${r},${g},${b}`;
-        }   
+        let color;
 
-        let a = parseFloat(c.dataset.alpha) || 0;
-        a = Math.min(1, +(a + 0.333).toFixed(2));
-        c.dataset.alpha = a;
-
-        c.style.backgroundColor = `rgba(${c.dataset.rgb}, ${a})`;
-    }
-
-    function rand255() {
-        return Math.floor(Math.random() * 256);
+        if (chkEraser.checked) {
+            color = "#ffffff";
+        } else if (chkRainbow.checked) {
+            color = randomColor();
+        } else {
+            color = penColor;
+        }
+        cell.style.backgroundColor = color;
     }
 
     function clearGrid() {
-        board.querySelectorAll(".cell").forEach(cell => {
-            cell.style.backgroundColor = "#ffffff";
-            cell.dataset.rgb = "";
-            cell.dataset.alpha = "0";
-        });
+        board.querySelectorAll(".cell").forEach(c => (c.style.backgroundColor = "#ffffff"));
+    }
+
+    // helpers 
+    function randomColor() {
+        const r = Math.floor(Math.random() * 256);
+        const g = Math.floor(Math.random() * 256);
+        const b = Math.floor(Math.random() * 256);
+        return `rgb(${r} ${g} ${b})`;
+    }
+    function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+    function isCell(el) { return el && el.classList && el.classList.contains("cell"); }
+
+    drawPalette();                                 
+    palette.addEventListener("mousedown", handlePick);
+    palette.addEventListener("mousemove", (e) => {
+        if (e.buttons) handlePick(e);                
+    });
+
+    function drawPalette() {
+        const ctx = palette.getContext("2d");
+        const w = palette.width;
+        const h = palette.height;
+  
+    // horizontal HUE gradient
+    const hue = ctx.createLinearGradient(0, 0, w, 0);
+    for (let i = 0; i <= 360; i += 10) {
+        hue.addColorStop(i / 360, `hsl(${i} 100% 50%)`);
+    }
+    ctx.fillStyle = hue;
+    ctx.fillRect(0, 0, w, h);
+  
+    // top WHITE overlay
+    const white = ctx.createLinearGradient(0, 0, 0, h);
+    white.addColorStop(0.00, "rgba(255,255,255,1)");
+    white.addColorStop(0.50, "rgba(255,255,255,0)");
+    ctx.fillStyle = white;
+    ctx.fillRect(0, 0, w, h);
+  
+    // bottom BLACK overlay
+    const black = ctx.createLinearGradient(0, 0, 0, h);
+    black.addColorStop(0.50, "rgba(0,0,0,0)");
+    black.addColorStop(1.00, "rgba(0,0,0,1)");
+    ctx.fillStyle = black;
+    ctx.fillRect(0, 0, w, h);
+  
+    // initial dot (upper-left-ish)
+    pickDot.style.left = "8%";
+    pickDot.style.top  = "8%";
+    }
+  
+    function handlePick(e) {
+        const rect = palette.getBoundingClientRect();
+        // scale client coords to canvas coords
+        const x = Math.floor((e.clientX - rect.left) * (palette.width / rect.width));
+        const y = Math.floor((e.clientY - rect.top)  * (palette.height / rect.height));
+        const ctx = palette.getContext("2d");
+        const [r, g, b] = ctx.getImageData(x, y, 1, 1).data;
+  
+        penColor = rgbToHex(r, g, b);
+  
+        // move the selection dot
+        pickDot.style.left = `${(x / palette.width) * 100}%`;
+        pickDot.style.top  = `${(y / palette.height) * 100}%`;
+    }
+  
+    function rgbToHex(r, g, b) {
+        return "#" + [r, g, b].map(v => v.toString(16).padStart(2, "0")).join("");
     }
 });
+
