@@ -9,14 +9,35 @@
 
     <body>
         <header class="bar">
-            <h1>Etch-a-Sketch</h1>
+            <h1 class="title">Etch-a-Sketch</h1>
             <div class="controls">
                 <button id="resizeBtn">New grid</button>
                 <button id="clearBtn">Clear</button>
             </div>
         </header>
 
-        <div id="board" class="board"></div>
+        <div class="app">
+            <div id="board" class="board" aria-label="Sketch board"></div>
+
+            <!-- Control Panel -->
+             <aside class="panel">
+                <div class="stack">
+                    <input type="color" id="color" class="color" value="#5b9bd5" aria-label="Pen color" />
+
+                    <label class="row"><input type="checkbox" id="eraser"> Eraser</label>
+                    <label class="row"><input type="checkbox" id="gridLines" checked> Show grid lines</label>
+                    <label class="row"><input type="checkbox" id="rainbow"> Rainbow!</label>
+                    <label class="row"><input type="checkbox" id="clickDraw"> Click to draw</label>
+
+                    <button id="clearBtn" class="btn gray">Clear board</button>
+
+                    <div class="slider">
+                        <input id="size" type="range" min="4" max="100" value="16" />
+                        <div class="sizeLabel"><span id="sizeVal">16</span></div>
+                    </div>
+                </div>
+             </aside>
+        </div>
 
         <script src="script.js" defer></script>
     </body>
