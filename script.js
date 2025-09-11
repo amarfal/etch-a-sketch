@@ -57,11 +57,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const r = rand255();
             const g = rand255();
             const b = rand255();
-            c.dataset.rgb = `{r},${g},${b}`;
+            c.dataset.rgb = `${r},${g},${b}`;
         }   
 
         let a = parseFloat(c.dataset.alpha) || 0;
-        a = Math.min(1, +(a + 0.1).toFixed(2));
+        a = Math.min(1, +(a + 0.333).toFixed(2));
         c.dataset.alpha = a;
 
         c.style.backgroundColor = `rgba(${c.dataset.rgb}, ${a})`;
