@@ -2,34 +2,43 @@ document.addEventListener('DOMContentLoaded', () => {
     // helpers
     const $ = (sel) => document.querySelector(sel);
 
-    const board     = $("#board");
-    const resizeBtn = $("#resizeBtn");
-    const clearBtn  = $("#clearBtn");
-
-    
+    const board      = $("#board");
+    const clearBtn   = $("#clearBtn");
+    const colorPick  = $("#color");
+    const chkEraser  = $("#eraser");
+    const chkGrid    = $("#gridLines");
+    const chkRainbow = $("#rainbow");
+    const chkClick   = $("#clickDraw");
+    const sizeRange  = $("#size");
+    const sizeVal    = $("#sizeVal");
 
     const MAX = 100;
     const DEFAULT_N = 16;
+    let n = DEFAULT_N;
 
-    makeGrid(DEFAULT_N);
+    let drawing = false;
+    let colorMode = "color";
+
+    makeGrid(n);
     wireUI();
 
     /* controls */
     function wireUI() {
-        resizeBtn.addEventListener("click", () => {
-            let n = prompt("How many squares per side? (1-100)", "16");
-            if (n === null) return;
-            n = parseInt(n, 10);
-
-            if (Number.isNaN(n) || n < 1 || n > MAX) {
-            alert("Please enter a whole number from 1 to 100.");
-            return;
-            }
-            makeGrid(n);
+        // grid lines toggle
+        chkGrid.addEventListener("change", () => {
+          board.classList.toggle("with-grid", chkGrid.checked);
         });
-
-        clearBtn.addEventListener("click", clearGrid);
-    }
+        board.classList.toggle("with-grid", chkGrid.checked);
+    
+        // color mode toggle
+        chkEraser.addEventListener("change", () => {
+          if (chkEraser.checked) { chkRainbow.checked = false; colorMode = "eraser"; }
+          else                   { colorMode = chkRainbow.checked ? "rainbow" : "color"; }
+        });
+        chkRainbow.addEventListener("change", () => {
+          if (chkRainbow.checked) { chkEraser.checked = false; colorMode = "rainbow"; }
+          else                    { colorMode = chkEraser.checked ? "eraser" : "color"; }
+    });
 
     /* --- creating the grid --- */
     function makeGrid(n) {
