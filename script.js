@@ -68,3 +68,11 @@ function wireUI() {
     clearBtn.addEventListener("click", clearGrid);
 }
 
+function clearGrid() {
+    board.querySelectorAll(".cell").forEach(cell => {
+        cell.style.backgroundColor = "#ffffff";
+        cell.dataset.rgb = "";
+        cell.dataset.alpha = "0";
+    });
+}
+
