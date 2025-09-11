@@ -43,4 +43,28 @@ function shadeCell(e) {
     let a = parseFloat(c.dataset.alpha) || 0;
     a = Math.min(1, +(a + 0.1).toFixed(2));
     c.dataset.alpha = a;
+
+    c.style.backgroundColor = `rgba(${c.dataset.rgb}, ${a})`;
 }
+
+function rand255() {
+    return Math.floor(Math.random() * 256);
+}
+
+/* controls */
+function wireUI() {
+    resizeBtn.addEventListener("click", () => {
+        let n = prompt("How many squares per side? (1-100)", "16");
+        if (n === null) return;
+        n = parseInt(n, 10);
+
+        if (Number.isNaN(n) || n < 1 || n > MAX) {
+            alert("Please enter a whole number from 1 to 100.");
+            return;
+        }
+        makeGrid(n);
+    });
+
+    clearBtn.addEventListener("click", clearGrid);
+}
+
