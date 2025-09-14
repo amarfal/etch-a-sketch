@@ -15,6 +15,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const palette    = $("#palette");
     const pickDot    = $("#pickDot");
 
+    chkClick.checked = true;
+
     let penColor = "#1d4ed8";
 
     const MAX = 100;
