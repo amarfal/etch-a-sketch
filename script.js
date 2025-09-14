@@ -63,11 +63,13 @@ document.addEventListener('DOMContentLoaded', () => {
             drawing = true;
             if (isCell(e.target)) shadeCell(e.target);
         });
+
         board.addEventListener("mouseover", (e) => {
             if (isCell(e.target) && (!chkClick.checked || drawing)) {
                 shadeCell(e.target);
             }
         });
+
         window.addEventListener("mouseup", () => drawing = false);
         board.addEventListener("mouseleave", () => drawing = false);
     }
@@ -171,4 +173,3 @@ document.addEventListener('DOMContentLoaded', () => {
         return "#" + [r, g, b].map(v => v.toString(16).padStart(2, "0")).join("");
     }
 });
-
