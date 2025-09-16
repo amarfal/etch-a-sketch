@@ -121,6 +121,15 @@ button:hover { filter: brightness(0.95); }
 
 .board.with-grid .cell { outline: 1px solid rgba(0,0,0,.5); }
 
+/* Custom cursors */
+div.board {
+  cursor: url('./images/pencil.png') 16 16, crosshair !important; /* using new 32x32 pencil image */
+}
+
+div.board.eraser-mode {
+  cursor: url('./images/eraser.png') 16 16, auto !important; /* using 32x32 eraser image */
+}
+
 .paletteWrap { position: relative; width: 100%; }
 .palette {
   display: block;
@@ -149,4 +158,3 @@ button:hover { filter: brightness(0.95); }
     .panel { order: 2; }
     .board { order: 1; width: 92vw; height: 92vw; }
 }
-

@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     chkClick.checked = true;
 
     let penColor = "#1d4ed8";
+    let colorMode = "color"; // tracks current color mode: "color", "eraser", or "rainbow"
 
     const MAX = 100;
     let n = 16;
@@ -34,15 +35,20 @@ document.addEventListener('DOMContentLoaded', () => {
           board.classList.toggle("with-grid", chkGrid.checked);
         });
         board.classList.toggle("with-grid", chkGrid.checked);
+        
+        // initialize cursor mode
+        board.classList.toggle("eraser-mode", chkEraser.checked);
     
         // color mode toggle
         chkEraser.addEventListener("change", () => {
           if (chkEraser.checked) { chkRainbow.checked = false; colorMode = "eraser"; }
           else                   { colorMode = chkRainbow.checked ? "rainbow" : "color"; }
+          board.classList.toggle("eraser-mode", chkEraser.checked);
         });
         chkRainbow.addEventListener("change", () => {
           if (chkRainbow.checked) { chkEraser.checked = false; colorMode = "rainbow"; }
           else                    { colorMode = chkEraser.checked ? "eraser" : "color"; }
+          board.classList.toggle("eraser-mode", chkEraser.checked);
         });
 
 
